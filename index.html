@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magnificent 7 재무 분석 대시보드</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutral (Stone, Amber, Gray) -->
+    <!-- Application Structure Plan: 사용자가 정보를 쉽게 탐색할 수 있도록 탭 기반의 대시보드 구조를 채택했습니다. '개요', '지표별 비교', '기업별 상세 분석', '최종 결론'의 네 가지 주요 섹션으로 구성됩니다. 이 구조는 보고서의 선형적인 Q&A 형식을 탈피하여, 사용자가 원하는 정보에 빠르게 접근하고 고수준의 비교 분석과 개별 기업의 심층 데이터 탐색을 자유롭게 오갈 수 있도록 설계되었습니다. 이를 통해 정보의 사용성과 탐색 효율성을 극대화했습니다. -->
+    <!-- Visualization & Content Choices: 보고서의 각 데이터는 그 목적에 맞춰 최적의 시각화 방식을 선택했습니다. '개요'에서는 각 기업의 핵심 상태를 카드로 요약하고, '지표별 비교'에서는 Chart.js를 활용한 동적 막대 차트를 통해 여러 기업을 직관적으로 비교합니다. '기업별 상세 분석'에서는 추세를 보여주는 선 차트와 핵심 데이터를 결합했습니다. 모든 시각화는 Canvas와 HTML/CSS만을 사용하여 SVG나 Mermaid.js 없이 구현되었으며, 사용자의 상호작용에 따라 동적으로 업데이트되어 데이터 탐색의 깊이를 더합니다. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f8fafc; /* coolGray-50 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+            max-height: 50vh;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 500px;
+            }
+        }
+        .nav-btn {
+            transition: all 0.3s ease;
+        }
+        .nav-btn.active {
+            background-color: #1e40af; /* blue-800 */
+            color: white;
+            font-weight: 700;
+        }
+        .company-btn.active {
+            background-color: #1e3a8a; /* blue-900 */
+            color: white;
+            border-color: #1e3a8a;
+        }
+        .kpi-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-slate-900">Magnificent 7 재무 분석</h1>
+            <p class="text-lg text-slate-600 mt-2">AI 시대의 거인들, M7 기업들의 재무 건전성과 미래 전망을 한눈에 살펴보세요.</p>
+        </header>
+
+        <nav class="flex justify-center bg-white rounded-lg shadow-md p-2 mb-8 sticky top-4 z-10">
+            <button data-view="overview" class="nav-btn active flex-1 sm:flex-none text-center px-4 py-2 rounded-md text-sm sm:text-base font-medium text-slate-700 hover:bg-slate-200">
+                종합 개요
+            </button>
+            <button data-view="comparison" class="nav-btn flex-1 sm:flex-none text-center px-4 py-2 rounded-md text-sm sm:text-base font-medium text-slate-700 hover:bg-slate-200">
+                지표별 비교
+            </button>
+            <button data-view="deepdive" class="nav-btn flex-1 sm:flex-none text-center px-4 py-2 rounded-md text-sm sm:text-base font-medium text-slate-700 hover:bg-slate-200">
+                기업별 상세 분석
+            </button>
+            <button data-view="conclusion" class="nav-btn flex-1 sm:flex-none text-center px-4 py-2 rounded-md text-sm sm:text-base font-medium text-slate-700 hover:bg-slate-200">
+                최종 결론
+            </button>
+        </nav>
+
+        <main id="app-container">
+            
+            <section id="overview" class="view-section">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-slate-900">M7 기업 종합 평가</h2>
+                    <p class="mt-2 text-slate-600 max-w-3xl mx-auto">각 기업의 핵심 성장 동력과 리스크를 바탕으로 한 최종 투자 전망 요약입니다. 카드를 클릭하여 상세 분석으로 이동할 수 있습니다.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- JS로 카드 생성 -->
+                </div>
+            </section>
+
+            <section id="comparison" class="view-section hidden">
+                 <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-slate-900">핵심 지표별 비교 분석</h2>
+                    <p class="mt-2 text-slate-600 max-w-3xl mx-auto">아래 드롭다운 메뉴에서 원하는 재무 지표를 선택하여 M7 기업들을 직관적으로 비교해보세요. 차트는 선택에 따라 동적으로 업데이트됩니다.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <div class="flex justify-center mb-4">
+                        <select id="metric-selector" class="block w-full max-w-xs p-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            <option value="revenueGrowth">매출 성장률 (TTM)</option>
+                            <option value="operatingMargin">영업이익률 (TTM)</option>
+                            <option value="roe">자기자본이익률 (ROE, TTM)</option>
+                            <option value="roic">사용자본이익률 (ROIC, TTM)</option>
+                            <option value="liquidityRatio">유동 비율</option>
+                        </select>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="comparison-chart"></canvas>
+                    </div>
+                    <div id="comparison-text" class="mt-6 text-slate-600 text-center"></div>
+                </div>
+            </section>
+
+            <section id="deepdive" class="view-section hidden">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-slate-900">기업별 심층 분석</h2>
+                    <p class="mt-2 text-slate-600 max-w-3xl mx-auto">분석하고 싶은 기업을 선택하세요. 해당 기업의 매출 추이, 핵심 재무 지표, 그리고 종합 분석 내용을 확인할 수 있습니다.</p>
+                </div>
+                <div class="flex flex-wrap justify-center gap-2 mb-8">
+                     <!-- JS로 기업 버튼 생성 -->
+                </div>
+                <div id="company-details-container">
+                    <!-- JS로 상세 정보 생성 -->
+                </div>
+            </section>
+
+            <section id="conclusion" class="view-section hidden">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-slate-900">최종 결론 및 투자 제언</h2>
+                    <p class="mt-2 text-slate-600 max-w-3xl mx-auto">M7 기업들에 대한 종합적인 분석을 바탕으로 한 최종 투자 전략과 제언입니다.</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-lg space-y-6 text-slate-700 leading-relaxed">
+                    <p class="text-lg">M7은 여전히 글로벌 시장의 핵심 성장 동력이지만, 기업 간의 재무적, 전략적 차이가 점차 뚜렷해지고 있습니다. 따라서 M7 전체를 하나의 투자 바구니에 담기보다는, 각 기업의 펀더멘털, 성장 동력, 리스크를 개별적으로 평가하는 **'선별적 투자'가 필수적인 시점**입니다.</p>
+                    
+                    <div class="border-l-4 border-blue-600 pl-4">
+                        <h3 class="font-bold text-xl text-slate-800">포트폴리오 핵심 추천</h3>
+                        <p class="mt-2">AI 인프라의 중심에 있는 **엔비디아**와 AI 및 클라우드 사업을 성공적으로 확장하고 있는 **마이크로소프트**는 포트폴리오의 핵심 성장주로 편입할 가치가 높습니다. 이들 기업은 견고한 재무 구조와 명확한 성장 동력을 바탕으로 장기적인 상승 여력을 보유하고 있습니다.</p>
+                    </div>
+
+                    <div class="border-l-4 border-amber-500 pl-4">
+                        <h3 class="font-bold text-xl text-slate-800">안정적 성장주</h3>
+                        <p class="mt-2">**아마존, 알파벳, 메타**는 각자의 핵심 사업에서 안정적인 현금 흐름을 창출하며 AI에 대한 투자를 확대하고 있습니다. 규제 리스크와 경쟁 심화라는 과제가 있지만, 견고한 펀더멘털을 바탕으로 꾸준한 성장이 기대됩니다.</p>
+                    </div>
+
+                    <div class="border-l-4 border-slate-500 pl-4">
+                        <h3 class="font-bold text-xl text-slate-800">신중한 접근 필요</h3>
+                        <p class="mt-2">**애플**은 강력한 브랜드와 서비스 부문을 가졌지만 하드웨어 성장 둔화라는 과제에 직면해 있습니다. **테슬라**는 성장 모멘텀 둔화와 경쟁 심화로 인해 불확실성이 커졌습니다. 이들 기업은 신사업의 성공 여부에 따라 주가 변동성이 클 수 있으므로, 투자 시 리스크 관리가 중요합니다.</p>
+                    </div>
+
+                     <p class="text-lg font-semibold text-center mt-8">결론적으로, M7 내에서도 옥석 가리기가 중요해졌습니다. 각 기업의 재무 상태와 미래 성장 동력을 명확히 이해하고, 이를 바탕으로 차별화된 투자 전략을 수립하는 것이 성공적인 투자의 핵심입니다.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    const m7Data = {
+        AAPL: {
+            name: "Apple",
+            verdict: "제한적 상승",
+            verdictColor: "bg-slate-500",
+            revenueGrowth: 2.02,
+            operatingMargin: 24.3,
+            roe: 151.31,
+            roic: 65.77,
+            liquidityRatio: 0.95,
+            revenueTrend: [7.79, -2.80, 2.02],
+            analysis: "강력한 브랜드 충성도와 서비스 부문 매출 성장은 긍정적이지만, 주력 하드웨어 제품의 성장 둔화는 리스크입니다. AI 경쟁에서 상대적으로 뒤처진다는 시장의 우려를 해소해야 하는 과제를 안고 있어, 제한적인 상승 또는 횡보가 예상됩니다."
+        },
+        MSFT: {
+            name: "Microsoft",
+            verdict: "지속적 상승",
+            verdictColor: "bg-blue-700",
+            revenueGrowth: 15.70,
+            operatingMargin: 45.62,
+            roe: 33.28,
+            roic: 28.1,
+            liquidityRatio: 1.35,
+            revenueTrend: [18.00, 6.90, 15.70],
+            analysis: "클라우드(Azure)와 AI 파트너십을 통한 안정적인 성장이 핵심 동력입니다. 뛰어난 재무 건전성 및 높은 마진율을 바탕으로 지속적인 상승이 전망됩니다."
+        },
+        AMZN: {
+            name: "Amazon",
+            verdict: "긍정적 상승",
+            verdictColor: "bg-green-600",
+            revenueGrowth: 10.99,
+            operatingMargin: 11.82,
+            roe: 5.60,
+            roic: 4.77,
+            liquidityRatio: 1.05,
+            revenueTrend: [9.40, 11.83, 10.99],
+            analysis: "AWS의 독보적인 수익성을 기반으로 AI 투자를 지속하고 있으며, 운영 효율성 개선을 통해 마진율을 높이고 있습니다. 과도한 투자 비용과 이커머스 시장 경쟁은 리스크지만, 장기적인 성장 동력은 유효하여 긍정적인 상승이 예상됩니다."
+        },
+        GOOGL: {
+            name: "Alphabet",
+            verdict: "상승",
+            verdictColor: "bg-sky-600",
+            revenueGrowth: 13.87,
+            operatingMargin: 34.23,
+            roe: 31.8,
+            roic: 29.7,
+            liquidityRatio: 2.0,
+            revenueTrend: [9.78, 8.68, 13.87],
+            analysis: "견조한 광고 매출 회복과 AI 및 클라우드 사업 성장을 통해 핵심 사업의 안정성을 확보하고 있습니다. 규제 리스크와 AI 경쟁에서의 불확실성은 존재하지만, 전반적인 펀더멘털은 견고하여 상승이 전망됩니다."
+        },
+        META: {
+            name: "Meta",
+            verdict: "상승",
+            verdictColor: "bg-indigo-600",
+            revenueGrowth: 21.94,
+            operatingMargin: 43.37,
+            roe: 40.65,
+            roic: 22.06,
+            liquidityRatio: 2.6,
+            revenueTrend: [-1.12, 15.69, 21.94],
+            analysis: "견조한 광고 매출 회복과 AI 및 클라우드 사업 성장을 통해 핵심 사업의 안정성을 확보하고 있습니다. 규제 리스크와 AI 경쟁에서의 불확실성은 존재하지만, 전반적인 펀더멘털은 견고하여 상승이 전망됩니다."
+        },
+        NVDA: {
+            name: "Nvidia",
+            verdict: "강력한 상승",
+            verdictColor: "bg-emerald-600",
+            revenueGrowth: 114.20,
+            operatingMargin: 59.86,
+            roe: 117.32,
+            roic: 99.71,
+            liquidityRatio: 3.39,
+            revenueTrend: [0.22, 125.85, 114.20],
+            analysis: "AI 칩 시장의 독보적인 지위와 압도적인 매출 및 이익 성장률을 바탕으로 가장 강력한 펀더멘털을 보유하고 있습니다. 높은 밸류에이션과 경쟁 심화는 리스크 요인이지만, AI 혁명의 중심에 있다는 점을 고려할 때 강력한 상승이 예상됩니다."
+        },
+        TSLA: {
+            name: "Tesla",
+            verdict: "하락 또는 큰 변동성",
+            verdictColor: "bg-red-600",
+            revenueGrowth: 0.95,
+            operatingMargin: 5.5,
+            roe: 11.68,
+            roic: 8.61,
+            liquidityRatio: 2.04,
+            revenueTrend: [51.35, 18.80, 0.95],
+            analysis: "과거의 높은 성장률이 최근 급격히 둔화되었으며, 전기차 시장 경쟁 심화로 인한 마진율 압박이 현실화되었습니다. 로봇택시 등 신사업에 대한 기대감은 높지만, 이는 아직 가시적인 성과로 이어지지 않았습니다. 따라서 펀더멘털보다는 기대감에 기반한 주가 변동성이 클 것으로 예상됩니다."
+        }
+    };
+
+    const companyOrder = ['NVDA', 'MSFT', 'AMZN', 'GOOGL', 'META', 'AAPL', 'TSLA'];
+
+    const metricDetails = {
+        revenueGrowth: { label: "매출 성장률 (%)", description: "최근 12개월(TTM) 동안의 매출 성장률입니다. 기업의 성장 속도를 나타내는 핵심 지표입니다." },
+        operatingMargin: { label: "영업이익률 (%)", description: "매출에서 영업 비용을 제외한 이익의 비율입니다. 기업의 핵심 사업 수익성을 보여줍니다." },
+        roe: { label: "자기자본이익률 (ROE, %)", description: "주주의 돈으로 얼마나 효율적으로 이익을 창출했는지를 나타내는 지표입니다." },
+        roic: { label: "사용자본이익률 (ROIC, %)", description: "투입된 총자본(부채 포함) 대비 이익 창출 효율성을 보여주는 지표입니다." },
+        liquidityRatio: { label: "유동 비율", description: "단기 부채 상환 능력을 나타내는 지표로, 재무 안정성을 평가하는 데 사용됩니다." },
+    };
+    
+    const navButtons = document.querySelectorAll('.nav-btn');
+    const viewSections = document.querySelectorAll('.view-section');
+    const overviewContainer = document.querySelector('#overview .grid');
+    const metricSelector = document.getElementById('metric-selector');
+    const companyButtonsContainer = document.querySelector('#deepdive .flex');
+    const companyDetailsContainer = document.getElementById('company-details-container');
+    let comparisonChart;
+
+    function init() {
+        setupNavigation();
+        renderOverview();
+        renderComparisonChart('revenueGrowth');
+        setupMetricSelector();
+        renderCompanyButtons();
+        renderCompanyDetails(companyOrder[0]);
+    }
+
+    function setupNavigation() {
+        navButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const view = btn.dataset.view;
+                
+                navButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                viewSections.forEach(section => {
+                    if (section.id === view) {
+                        section.classList.remove('hidden');
+                    } else {
+                        section.classList.add('hidden');
+                    }
+                });
+            });
+        });
+    }
+
+    function renderOverview() {
+        overviewContainer.innerHTML = '';
+        companyOrder.forEach(ticker => {
+            const company = m7Data[ticker];
+            const card = document.createElement('div');
+            card.className = 'kpi-card bg-white p-6 rounded-lg shadow-md cursor-pointer';
+            card.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-slate-800">${company.name}</h3>
+                    <span class="text-sm font-semibold text-slate-500">${ticker}</span>
+                </div>
+                <p class="mt-4 text-3xl font-bold text-slate-900">${company.revenueGrowth.toFixed(2)}%</p>
+                <p class="text-sm text-slate-500">매출 성장률 (TTM)</p>
+                <div class="mt-4 pt-4 border-t border-slate-200">
+                    <span class="text-sm font-semibold px-3 py-1 rounded-full text-white ${company.verdictColor}">${company.verdict}</span>
+                </div>
+            `;
+            card.addEventListener('click', () => {
+                document.querySelector('button[data-view="deepdive"]').click();
+                document.querySelector(`.company-btn[data-ticker="${ticker}"]`).click();
+            });
+            overviewContainer.appendChild(card);
+        });
+    }
+
+    function setupMetricSelector() {
+        metricSelector.addEventListener('change', (e) => {
+            renderComparisonChart(e.target.value);
+        });
+    }
+
+    function renderComparisonChart(metric) {
+        const labels = companyOrder.map(ticker => m7Data[ticker].name);
+        const data = companyOrder.map(ticker => m7Data[ticker][metric]);
+        const detail = metricDetails[metric];
+        
+        document.getElementById('comparison-text').textContent = detail.description;
+
+        const ctx = document.getElementById('comparison-chart').getContext('2d');
+        
+        if (comparisonChart) {
+            comparisonChart.destroy();
+        }
+
+        comparisonChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: detail.label,
+                    data: data,
+                    backgroundColor: [
+                        'rgba(30, 64, 175, 0.7)',  // Blue
+                        'rgba(22, 163, 74, 0.7)',  // Green
+                        'rgba(202, 138, 4, 0.7)',  // Amber
+                        'rgba(219, 39, 119, 0.7)', // Fuchsia
+                        'rgba(107, 33, 168, 0.7)', // Purple
+                        'rgba(71, 85, 105, 0.7)',  // Slate
+                        'rgba(220, 38, 38, 0.7)'   // Red
+                    ],
+                    borderColor: [
+                        'rgba(30, 64, 175, 1)',
+                        'rgba(22, 163, 74, 1)',
+                        'rgba(202, 138, 4, 1)',
+                        'rgba(219, 39, 119, 1)',
+                        'rgba(107, 33, 168, 1)',
+                        'rgba(71, 85, 105, 1)',
+                        'rgba(220, 38, 38, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += context.parsed.y.toFixed(2);
+                                    if (metric !== 'liquidityRatio') label += '%';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value, index, values) {
+                                return value + (metric !== 'liquidityRatio' ? '%' : '');
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function renderCompanyButtons() {
+        companyOrder.forEach((ticker, index) => {
+            const company = m7Data[ticker];
+            const button = document.createElement('button');
+            button.className = 'company-btn px-4 py-2 border border-slate-300 rounded-md text-sm font-medium hover:bg-slate-100 transition';
+            if (index === 0) button.classList.add('active');
+            button.textContent = company.name;
+            button.dataset.ticker = ticker;
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.company-btn').forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                renderCompanyDetails(ticker);
+            });
+            companyButtonsContainer.appendChild(button);
+        });
+    }
+
+    function renderCompanyDetails(ticker) {
+        const company = m7Data[ticker];
+        companyDetailsContainer.innerHTML = `
+            <div class="bg-white p-6 rounded-lg shadow-lg animate-fade-in">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-4">${company.name} (${ticker}) - 매출 성장률 추이</h3>
+                        <div class="chart-container" style="height:300px; max-height:40vh;">
+                            <canvas id="company-revenue-chart"></canvas>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold mb-4">핵심 지표 (TTM)</h3>
+                        <ul class="space-y-3 text-slate-700">
+                            <li class="flex justify-between border-b pb-2"><span>매출 성장률:</span> <span class="font-semibold">${company.revenueGrowth.toFixed(2)}%</span></li>
+                            <li class="flex justify-between border-b pb-2"><span>영업이익률:</span> <span class="font-semibold">${company.operatingMargin.toFixed(2)}%</span></li>
+                            <li class="flex justify-between border-b pb-2"><span>자기자본이익률 (ROE):</span> <span class="font-semibold">${company.roe.toFixed(2)}%</span></li>
+                            <li class="flex justify-between border-b pb-2"><span>사용자본이익률 (ROIC):</span> <span class="font-semibold">${company.roic.toFixed(2)}%</span></li>
+                            <li class="flex justify-between"><span>유동 비율:</span> <span class="font-semibold">${company.liquidityRatio.toFixed(2)}</span></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="mt-8 pt-6 border-t">
+                    <h3 class="text-2xl font-bold mb-4">종합 분석</h3>
+                    <p class="text-slate-600 leading-relaxed">${company.analysis}</p>
+                </div>
+            </div>
+        `;
+        renderCompanyRevenueChart(ticker);
+    }
+
+    function renderCompanyRevenueChart(ticker) {
+        const company = m7Data[ticker];
+        const ctx = document.getElementById('company-revenue-chart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['2022년', '2023년', '2024년'],
+                datasets: [{
+                    label: '연간 매출 성장률',
+                    data: company.revenueTrend,
+                    fill: false,
+                    borderColor: 'rgb(30, 64, 175)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                     y: {
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    init();
+});
+</script>
+</body>
+</html>
